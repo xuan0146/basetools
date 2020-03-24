@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/layer/2.1/skin/layer.css" rel="stylesheet">
+    <title>GetMockData</title>
+    <style>
+        .form{
+            margin: 5vh auto;
+            width: 600px;
+            padding: 20px 15px;
+            box-shadow: 3px 3px red, -1em 0 0.4em olive;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form">
+        <div class="form-group">
+            <label for="counts">Data Length</label>
+            <input type="number" class="form-control" id="counts" placeholder="生成数据长度" value="10">
+          </div>
+          <button type="submit" class="btn btn-primary" id="build">Build</button>
+    </div>
+
+
+    <div class="tableBox">
+        <table class="table table-hover table-striped">
+            <thead>
+                <th>ID</th>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>性别</th>
+                <th>地址</th>
+                <th>文章数</th>
+                <th>回答数</th>
+                <th>点赞</th>
+            </thead>
+
+            <tbody id="data">
+                
+            </tbody>
+        </table>
+    </div>
+    
+
+
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/Mock.js/1.0.1-beta3/mock-min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/layer/2.1/layer.js"></script>
+    <script>
+        $(document).ready(() => {
+            // click
+            $('#build').click(() => {
+                let counts = parseInt($('#counts').val());
+                if(! counts) {
+                    layer.msg('请输入您想要的长度哦',{icon: 3});
+                }else{
+                    if($('#counts').val() < 0 || $('#counts').val() > 100) {
+                        layer.msg('请输入1-100的长度哦~', {icon: 6});
+                    }else{
+                        $.ajax({
+                            url: 'https://www.zhuxingmin.com/lists',
+                            type: 'get',
+                            dataType: 'json',
+                            data: {
+                                counts: counts
+                            },
+                            success: res => {
+                                let html = '';
+                                for(let i = 0; i < res.data.userList.length; i ++) {
+                                    html += `<tr>
+                                        <td>${res.data.userList[i].uid}</td>
+                                        <td>${res.data.userList[i].name}</td>
+                                        <td>${res.data.userList[i].age}</td>
+                                        <td>${res.data.userList[i].gender === 1 ? '男' : '女'}</td>
+                                        <td>${res.data.userList[i].address}</td>
+                                        <td>${res.data.userList[i].info.articles}</td>
+                                        <td>${res.data.userList[i].info.answer}</td>
+                                        <td>${res.data.userList[i].info.favorate}</td>
+                                    </tr>`
+                                }
+                                $('#data').html(html);
+                            }
+                        })
+                    }
+                }
+            })
+
+            // Mock
+            Mock.mock(RegExp('/lists*.'), 'get', params => {
+                let len = params.url.split('?')[1].split('&')[0].split('=')[1];
+                return Mock.mock({
+                    code: 200,
+                    data: {
+                        [`userList|${len}`]: [
+                            {
+                                'uid|+1': 1,
+                                name: '@cname',
+                                'age|13-30': 13,
+                                'gender|1-2': 0,
+                                address: '@county(true)',
+                                info: {
+                                    'articles|3-150': 3,
+                                    'answer|9-99': 1,
+                                    'favorate|15-99999': 1,
+                                }
+                            }
+                        ]
+                    },
+                    msg: '请求成功'
+                })
+            })
+        })
+    </script>
+
+</body>
+</html>

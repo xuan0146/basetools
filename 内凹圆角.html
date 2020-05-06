@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            margin: 0;
+            background: #000;
+            padding: 20px 0;
+        }
+        div{
+            width: 80vw;
+            min-height: 15vh;
+            background: #666;
+            border-radius: 6px;
+            margin: 0 auto;
+            position: relative;
+            border-top: 1px dashed #333;
+        }
+        div::before,div::after{
+            content: '';
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #000;
+            position: absolute;
+            z-index: 999;
+        }
+        div::before{
+            left: -10px;
+            top: -10px;
+        }
+        div::after{
+            right: -10px;
+            top: -10px;
+        }
+        div:first-child{
+            border: none;
+        }
+        div:first-child::before,div:first-child::after{
+            content: '';
+            width: 0;
+            height: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    
+</body>
+</html>
